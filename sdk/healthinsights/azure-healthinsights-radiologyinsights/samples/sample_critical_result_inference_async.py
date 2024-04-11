@@ -28,7 +28,9 @@ USAGE:
 class HealthInsightsSamples:
     async def radiology_insights_async(self) -> None:
         # [START create_radiology_insights_client]
-
+        KEY = os.environ["AZURE_HEALTH_INSIGHTS_API_KEY"]
+        ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
+        
         radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
         # [END create_radiology_insights_client]
         doc_content1 = """CLINICAL HISTORY:   
