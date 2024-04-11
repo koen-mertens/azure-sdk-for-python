@@ -11,13 +11,13 @@ from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
 """
-FILE: sample_critical_result_inference_async.py
+FILE: sample_sex_mismatch_inference_async.py
 
 DESCRIPTION:
-The sample_critical_result_inference_async.py module processes a sample radiology document with the Radiology Insights service.
+The sample_sex_mismatch_inference_async.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize an asynchronous RadiologyInsightsClient, build a Radiology Insights request with the sample document,
 submit it to the client, RadiologyInsightsClient, build a Radiology Insights job request with the sample document,
-submit it to the client and display the Critical Results description extracted by the Radiology Insights service.     
+submit it to the client and display the Sex Mismatch indication extracted by the Radiology Insights service.
 
 
 USAGE:
@@ -28,7 +28,9 @@ USAGE:
 class HealthInsightsSamples:
     async def radiology_insights_async(self) -> None:
         # [START create_radiology_insights_client]
-
+        KEY = os.environ["AZURE_HEALTH_INSIGHTS_API_KEY"]
+        ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
+        
         radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
         # [END create_radiology_insights_client]
         doc_content1 = """CLINICAL HISTORY:   
@@ -100,21 +102,23 @@ class HealthInsightsSamples:
                 radiology_insights_data,
             )
             radiology_insights_result = await poller.result()
-            self.display_critical_results(radiology_insights_result)
+            self.display_sex_mismatch(radiology_insights_result)
             await radiology_insights_client.close()
         except Exception as ex:
             print(str(ex))
             return
 
-    def display_critical_results(self, radiology_insights_result):
-        # [START display_critical_results]
+    def display_sex_mismatch(self, radiology_insights_result):
+        # [START display_sex_mismatch]
         for patient_result in radiology_insights_result.patient_results:
             for ri_inference in patient_result.inferences:
-                if ri_inference.kind == models.RadiologyInsightsInferenceType.CRITICAL_RESULT:
-                    critical_result = ri_inference.result
-                    print(f"Critical Result Inference found: {critical_result.description}")
+                if ri_inference.kind == models.RadiologyInsightsInferenceType.SEX_MISMATCH:
+                    print(f"Sex Mismatch Inference found")
+                    indication = ri_inference.sex_indication
+                    for code in indication.coding:
+                        print(f"Sex Mismatch: Sex Indication: {code.system} {code.code} {code.display}")
 
-        # [END display_critical_results]
+        # [END display_sex_mismatch]
 
 
 async def main():
