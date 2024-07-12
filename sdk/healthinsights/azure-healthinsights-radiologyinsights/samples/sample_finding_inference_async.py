@@ -122,9 +122,8 @@ async def radiology_insights_async() -> None:
             poller = await radiology_insights_client.begin_infer_radiology_insights(
                 id=job_id,
                 resource=patient_data,
-            )
-            inference_result = await poller.result()
-            radiology_insights_result = models.RadiologyInsightsInferenceResult(inference_result)
+            )           
+            radiology_insights_result = await poller.result()
             display_finding(radiology_insights_result)
     except Exception as ex:
         print(str(ex))
